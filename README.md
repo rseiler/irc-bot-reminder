@@ -1,4 +1,6 @@
-# IRC Bot ReminderConnects to a IRC server and listens to private messages. 
+# IRC Bot Reminder
+
+Connects to a IRC server and listens to private messages. Send your messages to the bot and tell him when the message should be sent and to whom.
 
 ## Usage
 
