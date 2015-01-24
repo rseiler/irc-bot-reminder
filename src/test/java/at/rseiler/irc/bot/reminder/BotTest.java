@@ -26,6 +26,7 @@ public class BotTest {
         context.getListener().onPrivateMessage(createPrivateMessageEvent("add \"*/5 * * * * ?\" #rseiler test4", "rseiler"));
         context.getListener().onPrivateMessage(createPrivateMessageEvent("add 12:00 @rseiler test1", "rseiler"));
         context.getListener().onPrivateMessage(createPrivateMessageEvent("add 13:00 #rseiler test2", "rseiler"));
+        context.getListener().onPrivateMessage(createPrivateMessageEvent("add invalid", "rseiler"));
         context.getListener().onPrivateMessage(createPrivateMessageEvent("list", "rseiler"));
         context.getListener().onPrivateMessage(createPrivateMessageEvent("remove 2", "rseiler"));
 

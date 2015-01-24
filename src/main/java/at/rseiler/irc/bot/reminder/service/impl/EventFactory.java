@@ -59,7 +59,9 @@ public class EventFactory {
         events.add(createOnceDateTimeChat(user, command));
         events.add(createOnceDateTimeUser(user, command));
 
-        return events.stream().filter(Optional::isPresent).findFirst().get();
+        Optional<Optional<Event>> eventOptional = events.stream().filter(Optional::isPresent).findFirst();
+
+        return eventOptional.isPresent() ? eventOptional.get() : Optional.<Event>empty();
     }
 
     private Optional<Event> createCronChat(String user, String command) {
