@@ -1,6 +1,6 @@
-package at.rseiler.irc.bot.reminder.service;
+package at.rseiler.irc.bot.reminder.service.impl;
 
-import at.rseiler.irc.bot.reminder.cronevent.Event;
+import at.rseiler.irc.bot.reminder.event.Event;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;

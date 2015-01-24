@@ -1,16 +1,7 @@
 package at.rseiler.irc.bot.reminder;
 
 
-import at.rseiler.irc.bot.reminder.command.*;
-import at.rseiler.irc.bot.reminder.service.EventExecutor;
-import at.rseiler.irc.bot.reminder.service.EventFactory;
-import at.rseiler.irc.bot.reminder.service.EventListener;
-import at.rseiler.irc.bot.reminder.service.EventScheduler;
-import at.rseiler.irc.bot.reminder.util.PersistenceUtil;
-import org.pircbotx.Configuration;
-import org.pircbotx.Configuration.Builder;
-import org.pircbotx.PircBotX;
-import org.pircbotx.UtilSSLSocketFactory;
+import at.rseiler.irc.bot.reminder.service.impl.PersistenceServiceImpl;
 
 /**
  * Program entry point.
@@ -20,45 +11,18 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         if (args.length == 3) {
+            Context context = new Context(new PersistenceServiceImpl()).init(args[0], args[1], args[2]);
 
-            EventListener listener = new EventListener();
-            Configuration<PircBotX> configuration = new Builder<>()
-                    .setServerHostname(args[0])
-                    .setLogin(args[1])
-                    .setServerPassword(args[2])
-                    .addAutoJoinChannel("#bot")
-                    .setSocketFactory(new UtilSSLSocketFactory().trustAllCertificates())
-                    .setAutoSplitMessage(false)
-                    .setAutoReconnect(true)
-                    .setMessageDelay(100)
-                    .addListener(listener)
-                    .buildConfiguration();
-
-            PircBotX bot = new PircBotX(configuration);
-            EventExecutor eventExecutor = new EventExecutor(bot);
-            EventScheduler eventScheduler = new EventScheduler(eventExecutor);
-            eventScheduler.addEvents(PersistenceUtil.readFile());
-            listener.addCommand(createCommands(eventScheduler, new EventFactory()));
-
-            eventExecutor.start();
-            eventScheduler.start();
+            context.getEventExecutor().start();
+            context.getEventScheduler().start();
             // blocks as long as the bot is running
-            bot.startBot();
+            context.getBot().startBot();
 
-            eventScheduler.shutdown();
-            eventExecutor.shutdown();
+            context.getEventScheduler().shutdown();
+            context.getEventExecutor().shutdown();
         } else {
             System.out.println("Usage: java -jar irc-reminder-bot.jar serverHostname loginName password");
         }
-    }
-
-    private static Command[] createCommands(EventScheduler eventScheduler, EventFactory eventFactory) {
-        return new Command[]{
-                new AddCommand(eventScheduler, eventFactory),
-                new ExplainCommand(),
-                new ListCommand(eventScheduler),
-                new RemoveCommand(eventScheduler)
-        };
     }
 
 }

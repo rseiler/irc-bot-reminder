@@ -1,4 +1,4 @@
-package at.rseiler.irc.bot.reminder.cronevent;
+package at.rseiler.irc.bot.reminder.event;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

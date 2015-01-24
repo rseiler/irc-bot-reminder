@@ -24,7 +24,9 @@ public class ExplainCommand implements Command {
             try {
                 String expression = command.substring(EXPLAIN.length()).trim();
                 CronExpression cronExpression = new CronExpression(expression);
-                event.respond(cronExpression.getExpressionSummary().replaceAll("\n", ", "));
+                for (String line : cronExpression.getExpressionSummary().split("\n")) {
+                    event.respond(line);
+                }
             } catch (ParseException e) {
                 LOG.info(e);
                 event.respond("Failed to parse expression: " + e.getMessage());

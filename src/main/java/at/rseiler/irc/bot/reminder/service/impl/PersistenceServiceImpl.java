@@ -1,6 +1,7 @@
-package at.rseiler.irc.bot.reminder.util;
+package at.rseiler.irc.bot.reminder.service.impl;
 
-import at.rseiler.irc.bot.reminder.cronevent.Event;
+import at.rseiler.irc.bot.reminder.event.Event;
+import at.rseiler.irc.bot.reminder.service.PersistenceService;
 import org.apache.log4j.Logger;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
@@ -11,9 +12,9 @@ import java.util.List;
 /**
  * Util class to write/read the events from/to the disk.
  */
-public class PersistenceUtil {
+public class PersistenceServiceImpl implements PersistenceService {
 
-    private static final Logger LOG = Logger.getLogger(PersistenceUtil.class);
+    private static final Logger LOG = Logger.getLogger(PersistenceServiceImpl.class);
     private static final String FILE_NAME = "reminder-data.json";
 
     /**
@@ -22,7 +23,8 @@ public class PersistenceUtil {
      * @param events the events which should be persisted
      * @throws IOException
      */
-    public static void writeFile(List<Event> events) throws IOException {
+    @Override
+    public void writeFile(List<Event> events) throws IOException {
         try (FileOutputStream fileOut = new FileOutputStream(FILE_NAME); ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
             out.writeObject(events);
         }
@@ -34,7 +36,8 @@ public class PersistenceUtil {
      * @return the read events
      * @throws IOException
      */
-    public static List<Event> readFile() throws IOException {
+    @Override
+    public List<Event> readFile() throws IOException {
         if (new File(FILE_NAME).exists()) {
             try (FileInputStream fileInputStream = new FileInputStream(FILE_NAME); ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
                 return (List<Event>) objectInputStream.readObject();
@@ -52,7 +55,8 @@ public class PersistenceUtil {
      * @param event  the event which triggered the persisting of the events
      * @param events the events which should be persisted
      */
-    public static void persist(GenericMessageEvent event, List<Event> events) {
+    @Override
+    public void persist(GenericMessageEvent event, List<Event> events) {
         try {
             writeFile(events);
         } catch (IOException e) {

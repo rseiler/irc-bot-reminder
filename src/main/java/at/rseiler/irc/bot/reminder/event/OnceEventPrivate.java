@@ -1,4 +1,4 @@
-package at.rseiler.irc.bot.reminder.cronevent;
+package at.rseiler.irc.bot.reminder.event;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.PircBotX;

@@ -1,8 +1,9 @@
 package at.rseiler.irc.bot.reminder.command;
 
-import at.rseiler.irc.bot.reminder.cronevent.Event;
-import at.rseiler.irc.bot.reminder.service.EventScheduler;
-import at.rseiler.irc.bot.reminder.util.PersistenceUtil;
+import at.rseiler.irc.bot.reminder.event.Event;
+import at.rseiler.irc.bot.reminder.service.impl.EventScheduler;
+import at.rseiler.irc.bot.reminder.service.PersistenceService;
+import at.rseiler.irc.bot.reminder.service.impl.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
@@ -16,10 +17,13 @@ import java.util.List;
 public class RemoveCommand extends CommandAdapter {
 
     private static final String REMOVE = "remove";
-    private static final String ALL_REMOVE = "all-remove";
+    private final UserService userService;
+    private final PersistenceService persistenceService;
 
-    public RemoveCommand(EventScheduler eventScheduler) {
+    public RemoveCommand(EventScheduler eventScheduler, UserService userService, PersistenceService persistenceService) {
         super(eventScheduler);
+        this.userService = userService;
+        this.persistenceService = persistenceService;
     }
 
     @Override
@@ -27,21 +31,26 @@ public class RemoveCommand extends CommandAdapter {
         String command = event.getMessage();
 
         if (command.startsWith(REMOVE)) {
-            List<Event> events = getEventScheduler().getUserEvents(event.getUser().getNick());
+            List<Event> events = userService.getLastSeenEvents(event.getUser().getNick());
             String index = command.substring(REMOVE.length()).trim();
-            removeEvent(event, events, index);
-        } else if (command.startsWith(ALL_REMOVE)) {
-            List<Event> events = getEventScheduler().getCronEvents();
-            String index = command.substring(ALL_REMOVE.length()).trim();
             removeEvent(event, events, index);
         }
     }
 
     private void removeEvent(GenericMessageEvent event, List<Event> events, String index) {
-        if (StringUtils.isNumeric(index) && Integer.parseInt(index) > 0 && Integer.parseInt(index) <= events.size()) {
-            getEventScheduler().removeEvent(events.get(Integer.parseInt(index) - 1));
-            PersistenceUtil.persist(event, getEventScheduler().getCronEvents());
-        } else {
+        boolean success = false;
+
+        if (StringUtils.isNumeric(index)) {
+            int indexInt = Integer.parseInt(index);
+            if (indexInt > 0 && indexInt <= events.size()) {
+                getEventScheduler().removeEvent(events.get(indexInt - 1));
+                events.remove(indexInt - 1);
+                persistenceService.persist(event, getEventScheduler().getCronEvents());
+                success = true;
+            }
+        }
+
+        if (!success) {
             event.respond("Invalid parameter: " + index);
         }
     }

@@ -1,23 +1,31 @@
-package at.rseiler.irc.bot.reminder.cronevent;
+package at.rseiler.irc.bot.reminder.event;
 
 import com.google.common.base.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.Channel;
 import org.pircbotx.PircBotX;
-import org.quartz.CronExpression;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CronEventChat extends CronEvent {
+public class OnceEventChat extends OnceEvent {
 
-    private static final long serialVersionUID = -8965253939347189201L;
+    private static final long serialVersionUID = -8978701567702497643L;
 
     private String channelName;
 
-    public CronEventChat(CronExpression cronExpression, String user, String message, String channelName) {
-        super(user, message, cronExpression);
+    public OnceEventChat(String creator, String message, LocalDateTime localDateTime, String channelName) {
+        super(creator, message, localDateTime);
         this.channelName = channelName;
+    }
+
+    @Override
+    public String shortDescription(boolean showCreatedBy) {
+        String msg = StringUtils.abbreviate(getMessage(), 32);
+        String expression = getLocalDateTime().format(DATE_TIME_FORMATTER);
+        String creator = showCreatedBy ? String.format("(by %s)", getCreator()) : "";
+        return String.format("%s %s %s %s", expression, channelName, msg, creator);
     }
 
     @Override
@@ -28,19 +36,6 @@ public class CronEventChat extends CronEvent {
         }
 
         getChannel(pircBotX).get().send().message(getMessage());
-//        getPircBotX().sendRaw().rawLine("PART " + channel);
-    }
-
-    @Override
-    public String shortDescription(boolean showCreatedBy) {
-        String msg = StringUtils.abbreviate(getMessage(), 32);
-        String expression = getCronExpression().getCronExpression();
-        String creator = showCreatedBy ? String.format("(by %s)", getCreator()) : "";
-        return String.format("%s %s %s %s", expression, channelName, msg, creator);
-    }
-
-    public String getChannelName() {
-        return channelName;
     }
 
     private Optional<Channel> getChannel(PircBotX pircBotX) {
@@ -57,8 +52,9 @@ public class CronEventChat extends CronEvent {
 
     @Override
     public String toString() {
-        return "CronEventChat{" +
+        return "OnceEventChat{" +
                 "channelName='" + channelName + '\'' +
                 "} " + super.toString();
     }
+
 }

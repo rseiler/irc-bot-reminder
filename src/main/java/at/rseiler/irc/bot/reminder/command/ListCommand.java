@@ -1,7 +1,8 @@
 package at.rseiler.irc.bot.reminder.command;
 
-import at.rseiler.irc.bot.reminder.cronevent.Event;
-import at.rseiler.irc.bot.reminder.service.EventScheduler;
+import at.rseiler.irc.bot.reminder.event.Event;
+import at.rseiler.irc.bot.reminder.service.impl.EventScheduler;
+import at.rseiler.irc.bot.reminder.service.impl.UserService;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import java.util.List;
@@ -17,8 +18,11 @@ public class ListCommand extends CommandAdapter {
     private static final String LIST = "list";
     private static final String LIST_ALL = "list-all";
 
-    public ListCommand(EventScheduler eventScheduler) {
+    private final UserService userService;
+
+    public ListCommand(EventScheduler eventScheduler, UserService userService) {
         super(eventScheduler);
+        this.userService = userService;
     }
 
     @Override
@@ -27,9 +31,11 @@ public class ListCommand extends CommandAdapter {
 
         if (LIST.equals(command)) {
             List<Event> events = getEventScheduler().getUserEvents(event.getUser().getNick());
+            userService.putLastSeenEvents(event.getUser().getNick(), events);
             printEventList(event, events, false);
         } else if (LIST_ALL.equals(command)) {
             List<Event> events = getEventScheduler().getCronEvents();
+            userService.putLastSeenEvents(event.getUser().getNick(), events);
             printEventList(event, events, true);
         }
     }

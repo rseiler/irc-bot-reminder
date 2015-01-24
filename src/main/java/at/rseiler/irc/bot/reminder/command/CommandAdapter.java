@@ -1,6 +1,6 @@
 package at.rseiler.irc.bot.reminder.command;
 
-import at.rseiler.irc.bot.reminder.service.EventScheduler;
+import at.rseiler.irc.bot.reminder.service.impl.EventScheduler;
 
 public abstract class CommandAdapter implements Command {
 

@@ -1,9 +1,9 @@
 package at.rseiler.irc.bot.reminder.command;
 
-import at.rseiler.irc.bot.reminder.cronevent.Event;
-import at.rseiler.irc.bot.reminder.service.EventFactory;
-import at.rseiler.irc.bot.reminder.service.EventScheduler;
-import at.rseiler.irc.bot.reminder.util.PersistenceUtil;
+import at.rseiler.irc.bot.reminder.event.Event;
+import at.rseiler.irc.bot.reminder.service.impl.EventFactory;
+import at.rseiler.irc.bot.reminder.service.impl.EventScheduler;
+import at.rseiler.irc.bot.reminder.service.PersistenceService;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import java.util.Optional;
@@ -18,10 +18,12 @@ public class AddCommand extends CommandAdapter {
     private static final String ADD = "add";
 
     private final EventFactory eventFactory;
+    private final PersistenceService persistenceService;
 
-    public AddCommand(EventScheduler eventScheduler, EventFactory eventFactory) {
+    public AddCommand(EventScheduler eventScheduler, EventFactory eventFactory, PersistenceService persistenceService) {
         super(eventScheduler);
         this.eventFactory = eventFactory;
+        this.persistenceService = persistenceService;
     }
 
     @Override
@@ -33,7 +35,7 @@ public class AddCommand extends CommandAdapter {
 
             if (cronEvent.isPresent()) {
                 getEventScheduler().addEvent(cronEvent.get());
-                PersistenceUtil.persist(event, getEventScheduler().getCronEvents());
+                persistenceService.persist(event, getEventScheduler().getCronEvents());
             } else {
                 event.respond("Failed to create event.");
             }

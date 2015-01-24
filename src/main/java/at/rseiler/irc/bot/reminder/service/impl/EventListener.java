@@ -1,4 +1,4 @@
-package at.rseiler.irc.bot.reminder.service;
+package at.rseiler.irc.bot.reminder.service.impl;
 
 import at.rseiler.irc.bot.reminder.command.Command;
 import org.pircbotx.hooks.ListenerAdapter;
