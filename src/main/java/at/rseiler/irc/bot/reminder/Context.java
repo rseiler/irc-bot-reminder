@@ -1,12 +1,11 @@
 package at.rseiler.irc.bot.reminder;
 
 import at.rseiler.irc.bot.reminder.command.*;
-import at.rseiler.irc.bot.reminder.service.*;
+import at.rseiler.irc.bot.reminder.service.PersistenceService;
 import at.rseiler.irc.bot.reminder.service.impl.*;
 import org.pircbotx.Configuration;
 import org.pircbotx.Configuration.Builder;
 import org.pircbotx.PircBotX;
-import org.pircbotx.UtilSSLSocketFactory;
 
 import java.io.IOException;
 
@@ -22,14 +21,17 @@ public class Context {
         this.persistenceService = persistenceService;
     }
 
-    public Context init(String serverHostName, String login, String ServerPassword) throws IOException {
+    public Context init(String serverHostName, int serverPort, String login, String serverPassword) throws IOException {
         listener = new EventListener();
         Configuration<PircBotX> configuration = new Builder<>()
                 .setServerHostname(serverHostName)
+                .setServerPort(serverPort)
                 .setLogin(login)
-                .setServerPassword(ServerPassword)
+                .setServerPassword(serverPassword)
+                .setName("ReminderBot")
+                .setAutoNickChange(true)
                 .addAutoJoinChannel("#bot")
-                .setSocketFactory(new UtilSSLSocketFactory().trustAllCertificates())
+//                .setSocketFactory(new UtilSSLSocketFactory().trustAllCertificates())
                 .setAutoSplitMessage(false)
                 .setAutoReconnect(true)
                 .setMessageDelay(50)

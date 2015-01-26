@@ -10,8 +10,8 @@ import at.rseiler.irc.bot.reminder.service.impl.PersistenceServiceImpl;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        if (args.length == 3) {
-            Context context = new Context(new PersistenceServiceImpl()).init(args[0], args[1], args[2]);
+        if (args.length == 4) {
+            Context context = new Context(new PersistenceServiceImpl()).init(args[0], Integer.parseInt(args[1]), args[2], args[3]);
 
             context.getEventExecutor().start();
             context.getEventScheduler().start();
@@ -21,7 +21,7 @@ public class Main {
             context.getEventScheduler().shutdown();
             context.getEventExecutor().shutdown();
         } else {
-            System.out.println("Usage: java -jar irc-reminder-bot.jar serverHostname loginName password");
+            System.out.println("Usage: java -jar irc-reminder-bot.jar hostname port username password");
         }
     }
 
