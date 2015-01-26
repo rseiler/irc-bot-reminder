@@ -14,7 +14,7 @@ java -jar irc-reminder-bot.jar hostname username password
 * ```list```: lists the reminder messages which the user created
 * ```list-all```: lists all reminder message
 * ```remove [number]```: removes the reminder message with the selected number. the number match the number of the last list or list-all command.
-* ```explain ["cron-expression"]```: explains a cron expression
+* ```explain [cron-expression]```: explains a cron expression
 
 ## Examples
 
