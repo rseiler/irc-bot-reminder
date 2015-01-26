@@ -17,7 +17,7 @@ public class BotTest {
     @Before
     public void setUp() throws Exception {
         PersistenceService persistenceService = mock(PersistenceService.class);
-        context = new Context(persistenceService).init("hostName", 0, "login", "password");
+        context = new Context(persistenceService).init("hostName", 6667, "login", "password");
     }
 
     @Test
