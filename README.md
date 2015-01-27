@@ -31,5 +31,5 @@ list
 remove 1
 list-all
 all-remove 1
-explain "0 * * * *"
+explain 0 * * * *
 ```
